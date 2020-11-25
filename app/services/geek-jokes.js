@@ -1,21 +1,9 @@
 const axios = require('axios');
 
-const getJoke = () => {
+const getJoke = () =>
   axios
     .get('https://geek-jokes.sameerkumar.website/api?format=json')
-    .then(
-      response =>
-        // handle success
-        response.data.joke
-    )
-    .catch(
-      error =>
-        // handle error
-        error
-    )
-    .then(() => {
-      // always executed
-    });
-};
+    .then(response => response.data.joke)
+    .catch(error => error);
 
 module.exports = { getJoke };
