@@ -20,3 +20,9 @@ exports.encryptError = message => internalError(message, exports.USER_SIGNUP_ERR
 
 exports.INVALID_PASSWORD_ERROR = 'invalid_password_error';
 exports.invalidPasswordError = message => internalError(message, exports.INVALID_PASSWORD_ERROR);
+
+exports.EMAIL_EXISTING_ERROR = 'email_existing_error';
+exports.emailExistingError = message => internalError(message, exports.EMAIL_EXISTING_ERROR);
+
+exports.INVALID_EMAIL_ERROR = 'invalid_email_error';
+exports.invalidEmailError = message => internalError(message, exports.INVALID_EMAIL_ERROR);
