@@ -7,7 +7,17 @@ const statusCodes = {
   [errors.DATABASE_ERROR]: 503,
   [errors.DEFAULT_ERROR]: 500,
   [errors.INVALID_PASSWORD_ERROR]: 400,
-  [errors.INVALID_EMAIL_ERROR]: 400
+  [errors.INVALID_EMAIL_ERROR]: 400,
+  [errors.EMAIL_EXISTING_ERROR]: 401,
+  [errors.API_JOKES_ERROR]: 500,
+  [errors.USER_SIGNUP_ERROR]: 400,
+  [errors.ENCRYPT_PASSWORD_ERROR]: 500,
+  [errors.INVALID_NAME_ERROR]: 400,
+  [errors.INVALID_LASTNAME_ERROR]: 400,
+  [errors.MISSING_EMAIL_ERROR]: 400,
+  [errors.MISSING_PASSWORD_ERROR]: 400,
+  [errors.MISSING_LASTNAME_ERROR]: 400,
+  [errors.MISSING_NAME_ERROR]: 400
 };
 
 exports.handle = (error, req, res, next) => {

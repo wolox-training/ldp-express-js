@@ -2,19 +2,20 @@ const { inspect } = require('util');
 const bcrypt = require('bcrypt');
 
 const errors = require('../errors');
-const Users = require('../models/users');
+const User = require('../models').users;
 const logger = require('../logger');
 
 exports.createUser = newUser =>
-  Users.findOrCreate(newUser)
-    .then(user => {
-      const created = user[1];
-      if (created) return user[0];
-      throw errors.emailExistingError('Error, email already exists');
+  User.findOrCreate({ where: { email: newUser.email }, defaults: newUser })
+    .then(([user, created]) => {
+      if (!created) {
+        throw errors.emailExistingError('Error, email already exists');
+      }
+      return user;
     })
     .catch(err => {
       logger.error(inspect(err));
-      throw errors.userSignupError('Error creating user');
+      throw err;
     });
 
 exports.encryptPassword = password =>
