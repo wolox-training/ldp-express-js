@@ -1,4 +1,4 @@
-const { testResponse, truncateDatabase } = require('./helper');
+const { testResponse, truncateDatabase } = require('./helpersjs');
 
 const User = require('../app/models').users;
 
