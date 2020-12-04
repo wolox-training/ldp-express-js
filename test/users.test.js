@@ -1,13 +1,12 @@
-const { testResponse } = require('./helper');
+const { testResponse, truncateDatabase } = require('./helper');
 
 const User = require('../app/models').users;
 
 const singUpUser = { name: 'test', lastName: 'testing', email: 'test@testing.com', password: 'abcd1234' };
 
 describe('Test Users', () => {
-  beforeAll(async () => {
-    await User.destroy({ where: {} });
-  });
+  beforeAll(() => truncateDatabase());
+
   test('Should sign up for a user', () => testResponse('post', '/users', singUpUser, 201));
 
   test('Should test error email existing', () =>
@@ -20,7 +19,5 @@ describe('Test Users', () => {
 
   test('Should test missing parameters', () => testResponse('post', '/users', {}, 400));
 
-  afterAll(async () => {
-    await User.destroy({ where: {} });
-  });
+  afterAll(() => truncateDatabase());
 });
