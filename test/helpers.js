@@ -10,11 +10,9 @@ const truncateTable = model =>
 
 const truncateDatabase = () => Promise.all(tables.map(truncateTable));
 
-async function testResponse(method, url, body, result) {
-  await request(app)
-    [method](url) // eslint-disable-line
-    .send(body)
-    .expect(result);
-}
+const getTestResponse = params =>
+  request(app)
+    [params.method](params.url) // eslint-disable-line
+    .send(params.body);
 
-module.exports = { testResponse, truncateDatabase };
+module.exports = { getTestResponse, truncateDatabase };

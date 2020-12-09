@@ -3,7 +3,7 @@ const { createUser, encryptPassword } = require('../services/users');
 
 exports.signUp = ({ body }, res, next) => {
   logger.info('encrypting password');
-  encryptPassword(body.password)
+  return encryptPassword(body.password)
     .then(encryptedPassword => createUser({ ...body, password: encryptedPassword }))
     .then(user => {
       logger.info(`user: ${user.name} ${user.lastName} was created successfully`);
