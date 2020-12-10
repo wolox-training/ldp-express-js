@@ -4,10 +4,15 @@ const {
   passwordValidator,
   emailValidator,
   nameValidator,
-  lastnameValidator
+  lastnameValidator,
+  bodyValidator
 } = require('./middlewares/users');
 
 exports.init = app => {
   app.get('/health', healthCheck);
-  app.post('/users', [emailValidator, passwordValidator, nameValidator, lastnameValidator], users.signUp);
+  app.post(
+    '/users',
+    [bodyValidator, emailValidator, passwordValidator, nameValidator, lastnameValidator],
+    users.signUp
+  );
 };

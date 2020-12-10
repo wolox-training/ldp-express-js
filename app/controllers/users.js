@@ -6,8 +6,15 @@ exports.signUp = ({ body }, res, next) => {
   return encryptPassword(body.password)
     .then(encryptedPassword => createUser({ ...body, password: encryptedPassword }))
     .then(user => {
+      const userFormated = {
+        id: user.id,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password
+      };
       logger.info(`user: ${user.name} ${user.lastName} was created successfully`);
-      return res.status(201).send(user);
+      return res.status(201).send(userFormated);
     })
     .catch(next);
 };

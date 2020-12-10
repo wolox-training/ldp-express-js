@@ -17,7 +17,8 @@ const statusCodes = {
   [errors.MISSING_EMAIL_ERROR]: 400,
   [errors.MISSING_PASSWORD_ERROR]: 400,
   [errors.MISSING_LASTNAME_ERROR]: 400,
-  [errors.MISSING_NAME_ERROR]: 400
+  [errors.MISSING_NAME_ERROR]: 400,
+  [errors.MISSING_BODY_ERROR]: 400
 };
 
 exports.handle = (error, req, res, next) => {
