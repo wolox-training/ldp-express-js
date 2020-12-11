@@ -36,4 +36,5 @@ const lastnameValidator = (req, res, next) => {
     ? next()
     : next(error.invalidLastnameError('Invalid lastname'));
 };
+
 module.exports = { passwordValidator, emailValidator, nameValidator, lastnameValidator };
