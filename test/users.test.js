@@ -1,26 +1,82 @@
-const { testResponse } = require('./helper');
+const { getTestResponse, truncateDatabase } = require('./helpers.js');
+const errors = require('../app/errors');
 
 const User = require('../app/models').users;
 
 const singUpUser = { name: 'test', lastName: 'testing', email: 'test@testing.com', password: 'abcd1234' };
+const params = {
+  method: 'post',
+  url: '/users',
+  body: {}
+};
 
-describe('Test Users', () => {
+describe('Succesful case', () => {
+  let response = {};
+  let newUser = {};
+  let bodyCompare = {};
   beforeAll(async () => {
-    await User.destroy({ where: {} });
+    params.body = singUpUser;
+    await truncateDatabase();
+    response = await getTestResponse(params);
+    newUser = await User.findOne();
+    bodyCompare = {
+      id: newUser.id,
+      name: newUser.name,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      password: newUser.password
+    };
   });
-  test('Should sign up for a user', () => testResponse('post', '/users', singUpUser, 201));
 
-  test('Should test error email existing', () =>
-    User.create(singUpUser)
-      .then(testResponse('post', '/users', singUpUser, 401))
-      .catch(err => err));
+  test('User created ,the status code must be 201', () => expect(response.status).toBe(201));
+  test('user information must be in the body', () => expect(response.body).toMatchObject(bodyCompare));
+  afterAll(() => truncateDatabase());
+});
 
-  test('Should test error invalid password', () =>
-    testResponse('post', '/users', { ...singUpUser, email: 'test2@testing.com', password: 'abcd' }, 400));
+describe('Wrong parameters', () => {
+  beforeAll(async () => {
+    params.body = singUpUser;
+    await truncateDatabase();
+  });
 
-  test('Should test missing parameters', () => testResponse('post', '/users', {}, 400));
+  test('Email existing,the status code must be 401', () =>
+    User.create(singUpUser).then(() =>
+      getTestResponse(params).then(response => expect(response.status).toBe(401))
+    ));
 
-  afterAll(async () => {
-    await User.destroy({ where: {} });
+  test('Email existing error must be in the body', () =>
+    User.create(singUpUser).then(() =>
+      getTestResponse(params).then(response => {
+        const error = errors.emailExistingError('Error, email already exists');
+        expect(response.body).toMatchObject({ message: error.message, internal_code: error.internalCode });
+      })
+    ));
+
+  test('invalid password,the status code must be 400', () => {
+    params.body = { ...singUpUser, password: 'abcd' };
+    getTestResponse(params).then(response => expect(response.status).toBe(400));
+  });
+  test('invalid password error must be in the body', () => {
+    params.body = { ...singUpUser, password: 'abcd' };
+    const error = errors.invalidPasswordError('Invalid password');
+    getTestResponse(params).then(response =>
+      expect(response.body).toMatchObject({ message: error.message, internal_code: error.internalCode })
+    );
+  });
+  afterAll(() => truncateDatabase());
+});
+
+describe('Missing parameters', () => {
+  let response = {};
+  beforeAll(async () => {
+    params.body = {};
+    await truncateDatabase();
+    response = await getTestResponse(params);
+  });
+
+  test('Missing body, the status code must be 400', () => expect(response.status).toBe(400));
+  test('missing body error must be in the body', () => {
+    const error = errors.missingBodyError('missing body');
+    expect(response.body).toMatchObject({ message: error.message, internal_code: error.internalCode });
   });
 });

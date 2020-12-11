@@ -47,3 +47,5 @@ exports.missingLastnameError = message => internalError(message, exports.MISSING
 
 exports.SCHEMA_ERROR = 'schema_error';
 exports.schemaError = message => internalError(message, exports.SCHEMA_ERROR);
+exports.MISSING_BODY_ERROR = 'missing_body_error';
+exports.missingBodyError = message => internalError(message, exports.MISSING_BODY_ERROR);
