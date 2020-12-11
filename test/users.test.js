@@ -1,5 +1,5 @@
 const { getTestResponse, truncateDatabase } = require('./helpers.js');
-const errors = require('../app/errors');
+// const errors = require('../app/errors');
 
 const User = require('../app/models').users;
 
@@ -30,53 +30,40 @@ describe('Succesful case', () => {
 
   test('User created ,the status code must be 201', () => expect(response.status).toBe(201));
   test('user information must be in the body', () => expect(response.body).toMatchObject(bodyCompare));
-  afterAll(() => truncateDatabase());
 });
 
-describe('Wrong parameters', () => {
+describe('Existing email', () => {
   beforeAll(async () => {
     params.body = singUpUser;
     await truncateDatabase();
   });
-
   test('Email existing,the status code must be 401', () =>
     User.create(singUpUser).then(() =>
       getTestResponse(params).then(response => expect(response.status).toBe(401))
     ));
-
-  test('Email existing error must be in the body', () =>
-    User.create(singUpUser).then(() =>
-      getTestResponse(params).then(response => {
-        const error = errors.emailExistingError('Error, email already exists');
-        expect(response.body).toMatchObject({ message: error.message, internal_code: error.internalCode });
-      })
-    ));
-
-  test('invalid password,the status code must be 400', () => {
-    params.body = { ...singUpUser, password: 'abcd' };
-    getTestResponse(params).then(response => expect(response.status).toBe(400));
-  });
-  test('invalid password error must be in the body', () => {
-    params.body = { ...singUpUser, password: 'abcd' };
-    const error = errors.invalidPasswordError('Invalid password');
-    getTestResponse(params).then(response =>
-      expect(response.body).toMatchObject({ message: error.message, internal_code: error.internalCode })
-    );
-  });
-  afterAll(() => truncateDatabase());
 });
 
-describe('Missing parameters', () => {
-  let response = {};
-  beforeAll(async () => {
-    params.body = {};
-    await truncateDatabase();
-    response = await getTestResponse(params);
-  });
-
-  test('Missing body, the status code must be 400', () => expect(response.status).toBe(400));
-  test('missing body error must be in the body', () => {
-    const error = errors.missingBodyError('missing body');
-    expect(response.body).toMatchObject({ message: error.message, internal_code: error.internalCode });
+describe('Failure cases users', () => {
+  const user = {};
+  const { name, lastName, email, password } = user;
+  describe.each([
+    { email: 'leand', password, name },
+    { lastName, email, password: 1234 },
+    { name, lastName, email },
+    { password, name, lastName },
+    {}
+  ])('schema sent in the request: %p', schema => {
+    let response = {};
+    beforeAll(async () => {
+      params.body = schema;
+      await truncateDatabase();
+      response = await getTestResponse(params);
+    });
+    test('The error must be schema error', () => {
+      expect(response.body.internal_code).toBe('schema_error');
+    });
+    test('The statusCode must be 400', () => {
+      expect(response.statusCode).toBe(400);
+    });
   });
 });

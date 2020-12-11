@@ -5,10 +5,11 @@ exports.userSingUpSchema = {
     in: ['body'],
     isEmpty: {
       negated: true,
-      errorsMesssage: errors.missingNameError('Missing name property')
+      errorsMesssage: errors.MISSING_NAME_ERROR
     },
     trim: true,
-    isString: true
+    isString: true,
+    errorMessage: errors.INVALID_NAME_ERROR
   },
   lastName: {
     in: ['body'],
@@ -17,7 +18,8 @@ exports.userSingUpSchema = {
       errorsMesssage: errors.MISSING_LASTNAME_ERROR
     },
     trim: true,
-    isString: true
+    isString: true,
+    errorMessage: errors.INVALID_LASTNAME_ERROR
   },
   email: {
     in: ['body'],
