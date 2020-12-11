@@ -21,6 +21,11 @@ const passwordValidator = (req, res, next) => {
     ? next()
     : next(error.invalidPasswordError('Invalid password'));
 };
+const bodyValidator = (req, res, next) =>
+  req.body.constructor === Object && Object.keys(req.body).length === 0
+    ? next(error.missingBodyError('missing body'))
+    : next();
+
 const emailValidator = (req, res, next) => {
   if (!req.body.email) next(error.missingEmailError('missing email property'));
   return regexEmailValidator(req.body.email) ? next() : next(error.invalidEmailError('Invalid email'));
@@ -36,4 +41,4 @@ const lastnameValidator = (req, res, next) => {
     ? next()
     : next(error.invalidLastnameError('Invalid lastname'));
 };
-module.exports = { passwordValidator, emailValidator, nameValidator, lastnameValidator };
+module.exports = { passwordValidator, emailValidator, nameValidator, lastnameValidator, bodyValidator };

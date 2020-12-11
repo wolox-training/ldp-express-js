@@ -44,3 +44,6 @@ exports.missingNameError = message => internalError(message, exports.MISSING_NAM
 
 exports.MISSING_LASTNAME_ERROR = 'missing_lastname_error';
 exports.missingLastnameError = message => internalError(message, exports.MISSING_LASTNAME_ERROR);
+
+exports.MISSING_BODY_ERROR = 'missing_body_error';
+exports.missingBodyError = message => internalError(message, exports.MISSING_BODY_ERROR);
