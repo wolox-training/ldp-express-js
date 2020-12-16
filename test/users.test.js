@@ -3,6 +3,7 @@ const { getTestResponse, truncateDatabase } = require('./helpers.js');
 
 const User = require('../app/models').users;
 
+const logInUser = { email: 'test@testing.com', password: 'abcd1234' };
 const singUpUser = { name: 'test', lastName: 'testing', email: 'test@testing.com', password: 'abcd1234' };
 const params = {
   method: 'post',
@@ -59,11 +60,76 @@ describe('Failure cases users', () => {
       await truncateDatabase();
       response = await getTestResponse(params);
     });
+    test('The statusCode must be 422', () => {
+      expect(response.statusCode).toBe(422);
+    });
     test('The error must be schema error', () => {
       expect(response.body.internal_code).toBe('schema_error');
     });
-    test('The statusCode must be 400', () => {
-      expect(response.statusCode).toBe(400);
+  });
+});
+
+describe('Login succesful cases', () => {
+  beforeAll(async () => {
+    params.body = singUpUser;
+    params.url = '/users';
+    await truncateDatabase();
+  });
+
+  test('Login success,the status code must be 200', () =>
+    getTestResponse(params).then(() => {
+      params.body = logInUser;
+      params.url = '/users/sessions';
+      return getTestResponse(params).then(response => expect(response.status).toBe(200));
+    }));
+});
+
+describe('Failure cases users login', () => {
+  const user = {};
+  const { email, password } = user;
+  params.body = singUpUser;
+  params.url = '/users';
+  const paramsLogIn = params;
+  let response = {};
+
+  describe('wrong password and email cases', () => {
+    describe.each([
+      { email: 'test@testing.com', password: '1234abcd' },
+      { email: 'test2@testing.com', password: 'abcd1234' }
+    ])('Login error,user sent in the request: %p', loginUser => {
+      beforeAll(async () => {
+        await getTestResponse(params);
+        paramsLogIn.body = loginUser;
+        paramsLogIn.url = '/users/sessions';
+        response = await getTestResponse(paramsLogIn);
+      });
+      test('wrong email or password,the status code must be 400', () => expect(response.status).toBe(400));
+
+      test('The error must be authentication error', () => {
+        expect(response.body.internal_code).toBe('authentication_error');
+      });
+
+      afterAll(async () => {
+        await truncateDatabase;
+      });
     });
   });
+
+  describe.each([{ email: 'leand', password }, { email, password: 1234 }, { email }, { password }, {}])(
+    'Schema error,schema sent in the request: %p',
+    schema => {
+      beforeAll(async () => {
+        params.body = schema;
+        params.url = '/users/sessions';
+        await truncateDatabase();
+        response = await getTestResponse(params);
+      });
+      test('The statusCode must be 422', () => {
+        expect(response.statusCode).toBe(422);
+      });
+      test('The error must be schema error', () => {
+        expect(response.body.internal_code).toBe('schema_error');
+      });
+    }
+  );
 });
