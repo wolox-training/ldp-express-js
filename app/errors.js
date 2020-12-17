@@ -16,7 +16,10 @@ exports.USER_SIGNUP_ERROR = 'user_signup_error';
 exports.userSignupError = message => internalError(message, exports.USER_SIGNUP_ERROR);
 
 exports.ENCRYPT_PASSWORD_ERROR = 'encrypt_password_error';
-exports.encryptError = message => internalError(message, exports.USER_SIGNUP_ERROR);
+exports.encryptError = message => internalError(message, exports.ENCRYPT_PASSWORD_ERROR);
+
+exports.DECRYPT_PASSWORD_ERROR = 'decrypt_password_error';
+exports.decryptError = message => internalError(message, exports.DECRYPT_PASSWORD_ERROR);
 
 exports.INVALID_PASSWORD_ERROR = 'invalid_password_error';
 exports.invalidPasswordError = message => internalError(message, exports.INVALID_PASSWORD_ERROR);
@@ -50,3 +53,6 @@ exports.schemaError = message => internalError(message, exports.SCHEMA_ERROR);
 
 exports.MISSING_BODY_ERROR = 'missing_body_error';
 exports.missingBodyError = message => internalError(message, exports.MISSING_BODY_ERROR);
+
+exports.AUTHENTICATION_ERROR = 'authentication_error';
+exports.authenticationError = message => internalError(message, exports.AUTHENTICATION_ERROR);

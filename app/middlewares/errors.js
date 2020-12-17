@@ -10,7 +10,9 @@ const statusCodes = {
   [errors.API_JOKES_ERROR]: 500,
   [errors.USER_SIGNUP_ERROR]: 400,
   [errors.ENCRYPT_PASSWORD_ERROR]: 500,
-  [errors.SCHEMA_ERROR]: 422
+  [errors.SCHEMA_ERROR]: 422,
+  [errors.AUTHENTICATION_ERROR]: 400,
+  [errors.DECRYPT_PASSWORD_ERROR]: 500
 };
 
 exports.handle = (error, req, res, next) => {
